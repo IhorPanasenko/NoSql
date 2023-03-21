@@ -1,5 +1,7 @@
-﻿using Core.Models;
+﻿using Core;
+using Core.Models;
 using DAL.Interfaces;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,29 +12,36 @@ namespace DAL.Repositories
 {
     public class BookRepository : IBookRepository
     {
+        private readonly IMongoCollection<Book> books;
+        public BookRepository(ILibraryDatabaseSettings settings, IMongoClient mongoClient)
+        {
+            var database = mongoClient.GetDatabase(settings.DatabaseName);
+            books = database.GetCollection<Book>(settings.BooksCollectionName);
+        }
         public Book Create(Book book)
         {
-            throw new NotImplementedException();
+            books.InsertOne(book);
+            return book;
         }
 
         public void Delete(string bookId)
         {
-            throw new NotImplementedException();
+            books.DeleteOne(b=> b.Id == bookId);
         }
 
-        public List<Book> GetAll()
+        public async Task<List<Book>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await books.Find(b=>true).ToListAsync();
         }
 
-        public Book GetById(string bookId)
+        public async Task<Book> GetByIdAsync(string bookId)
         {
-            throw new NotImplementedException();
+            return  await books.Find(b => true).FirstOrDefaultAsync();
         }
 
         public void Update(string bookId, Book book)
         {
-            throw new NotImplementedException();
+            books.ReplaceOneAsync(b=>b.Id == bookId, book);
         }
     }
 }
