@@ -1,4 +1,6 @@
 using Core;
+using DAL.Interfaces;
+using DAL.Repositories;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -11,6 +13,8 @@ builder.Services.AddSingleton<IMongoClient>(s =>
 builder.Services.AddSingleton<ILibraryDatabaseSettings>(sp => sp.GetRequiredService<IOptions<LibraryDatabaseSettings>>().Value);
 
 builder.Services.Configure<LibraryDatabaseSettings>(builder.Configuration.GetSection(nameof(LibraryDatabaseSettings)));
+
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 
 
