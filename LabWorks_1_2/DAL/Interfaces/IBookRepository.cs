@@ -10,8 +10,8 @@ namespace DAL.Interfaces
     public interface IBookRepository
     {
         public Book Create(Book book);
-        public List<Book> GetAll();
-        public Book GetById(string bookId);
+        public Task<List<Book>> GetAllAsync();
+        public Task<Book> GetByIdAsync(string bookId);
         public void Delete(string bookId);
 
         public void Update (string bookId, Book book);
